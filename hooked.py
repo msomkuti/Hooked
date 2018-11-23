@@ -91,21 +91,23 @@ chat = pg.Surface((200, 200))  # Create a new surface which will hold the shape 
 # pg.draw.arc(screen, (255, 0, 0), (0, 100, 0, 20), 0, 0.7853982, 2)
 
 
-chat.fill((0, 0, 255))  # Make our chat bubble blue, WILL WANT TO FIX TO ONLY DRAW IN BUBBLE
+# chat.fill((0, 0, 255))  # Make our chat bubble blue, WILL WANT TO FIX TO ONLY DRAW IN BUBBLE
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # TEST BUBBLE
-chatDims = [200, 200]  # SHOULD GET COORDINATES FROM THE RECT OF CHAT
-chatBubble = Bubble(chat, 0, screenDims, chatDims)  # Make im into workable object
-chatBubble.scale(chatDims[0], chatDims[1])  # Default bubble
+# chatDims = [200, 200]  # SHOULD GET COORDINATES FROM THE RECT OF CHAT
+#  chatBubble = Bubble(chat, 0, screenDims, chatDims)  # Make im into workable object
+# chatBubble.scale(chatDims[0], chatDims[1])  # Default bubble
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+chatBubble = Bubble(chat, 0, screenDims)  # Make im into workable object
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # SECOND TEST BUBBLE
 
-chatBubble1 = Bubble(chat, 1, screenDims, chatDims)  # Make im into workable object
-chatBubble1.scale(chatDims[0], chatDims[1])  # Default bubble
+chatBubble1 = Bubble(chat, 0, screenDims)  # Make im into workable object
+# chatBubble1 = Bubble(chat, 0, screenDims, chatDims)  # Make im into workable object
+# chatBubble1.scale(chatDims[0], chatDims[1])  # Default bubble
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -161,17 +163,21 @@ while 1:  # Enter main game loop
             #print(chatBubble1.position)
 
             for i in range(1):
-                chatBubble.scroll(screen, convoBG, convAshley[1])  # Move messages upwards when enter is pushed
+                chatBubble.scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
                 #chatBubble1.scroll(screen, convoBG, 'ok')  # Move messages upwards when enter is pushed
                 pg.display.update()
                 pg.time.delay(10)
 
             pg.display.update()
 
-            if chatBubble.position[1] < -chatDims[1]:  # If height of chat bubble off screen, destroy it
-                del chatBubble  # need to fix the way this erases, remove from dictionary?
-                                # or move it to a new one of past conversations
-                pass
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            # MAKE A WAY OF DELETING OLD CHATS
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            # if chatBubble.position[1] < -chatDims[1]:  # If height of chat bubble off screen, destroy it
+            #     del chatBubble  # need to fix the way this erases, remove from dictionary?
+            #                     # or move it to a new one of past conversations
+            #     pass
 
         if event.type == pg.QUIT:
             pg.quit()
