@@ -1,0 +1,142 @@
+# This file holds the functions and classes for the Hooked game
+
+import pygame as pg
+import sys, os
+from pygame.locals import *
+pg.init()
+
+class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
+    font = pg.font.SysFont(None, 32)  # Set our font
+
+    def __init__(self, image, sent, screenDims, chatDims):
+        self.image = image
+        self.scrollH = [50, 600]  # Scroll upwards from here, default (x,y) of bubbles
+        if sent != 1:  # Formatting for sent v.s. received messages
+
+                        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                       # NEED TO MAKE FLIP FOR OTHER SIDE
+                        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            self.position = image.get_rect().move(self.scrollH[0], self.scrollH[1])  # Position bubbles
+            self.image = pg.transform.flip(self.image, 1, 0)  # Flip our chat bubble on xaxis to face the correct way
+        if sent == 1:
+            self.scrollH[0] = screenDims[0] - chatDims[0] - self.scrollH[0]
+            self.position = image.get_rect().move(self.scrollH[0], self.scrollH[1])
+
+    def scale(self, width, height):  # Scale our bubble to size
+        self.image = pg.transform.scale(self.image, (width, height))
+
+    def addtext(self, screen, chatbubble, text):
+        imcors = chatbubble.position  # Get rect values of chat
+        self.text = text.split()  # Text inside chat bubble
+        lines = []  # Hold our new lines of text
+
+        numwords = len(self.text)  # Get num of words in msg
+        num_words = 0  # Index to keep track of words already used
+
+        done = 0  # Exit condition
+        while done == 0:
+            cut_off = numwords  # Start indx at end of list
+            texttemp = self.text[num_words: cut_off]
+            print(texttemp)
+            rendercheck = ''.join(texttemp)
+            rendersize = Bubble.font.size(rendercheck)  # Check how much space it will take to render msg
+
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            # MAKE 200 DYNAMIC TO THE WIDTH OF THE CHAT BUBBLE, STILL NOT WORKING CORRECTLY
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            if rendersize[0] > 200:  # REPLACE ALL THIS WITH MESSAGE WIDTH
+
+                while rendersize[0] > 200:  # imcors[2]:  # If the length of the msg is greater than width of bubble, split the msg
+                    cut_off = cut_off - 1  # Keep track of indx of # of words we cut off
+                    texttemp = texttemp[num_words: cut_off]  # Cut off words until short enough, stop at cut_off
+                    # NOTE: text[2,3] will only get the 2nd word
+
+                    rendercheck = ''.join(texttemp)
+                    rendersize = Bubble.font.size(rendercheck)  # See if our sliced text will fit
+
+                texttemp = texttemp[num_words: cut_off]
+
+            num_words = cut_off
+            line = texttemp
+            lines.append(line)
+
+            if num_words == numwords:  # Stop when we have gone through all words
+                                    # NOTE: if a = '123' len(a) = 3 and a[3:3] returns ''
+                done = 1
+
+        offset = 0  # Offset our lines of text when rendering
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # GET TEXT TO BE SPACED EVENLY IN MSG, MAKE SURE IT DOES NOT GO PAST BOTTOM OF MSG
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        text_xcors = []  # Hold the x coordinates of our text, each tuple contains beg/end coordinates of each line
+        text_ycors = []  # Hold the y coordinates of our text
+        text_xcors.append(imcors[0])  # The horizontal starting point will be same for each line
+        text_ycors.append(imcors[1])  # Start with y coordinate of topmost line
+        print(lines)
+
+        for line in lines:
+            line = ''.join(line)
+            rendersize = Bubble.font.size(line)  # IS THIS NECESSARY HERE OR DO I ONLY HAVE TO GET SIZE ONCE???
+            offset += 1
+            imcorstemp = imcors
+            y_cord_old = imcorstemp[1]  # Get beginning y coordinate
+            #text_xcors.append([imcorstemp[0], imcorstemp[0] + rendersize[0]])
+            text_xcors.append(imcorstemp[0] + rendersize[0])
+            print(imcors)
+            imcorstemp[1] = imcors[1] + rendersize[1] * 1.25 #* offset  # change y cor of new line of txt down by
+                                                                    # height of txt * num of lines
+
+            #text_ycors.append([y_cord_old, imcorstemp[1]])  # Append tuple containing old and new y coordinate
+            text_ycors.append(imcorstemp[1] + rendersize[1])  # Append tuple containing old and new y coordinate
+
+            good_line = Bubble.font.render(line, True, (255, 0, 255))  # Render font to surface
+            screen.blit(good_line, imcorstemp)
+        #print(text_xcors)
+        #print(text_ycors)
+        #self.bubble_draw(self.image, text_xcors, text_ycors)
+
+
+    def bubble_draw(self, chat_surface, text_xcors, text_ycors):  # SHOULD I ADD SCREEN DIMS?
+        print('ok')
+        horz_cords = [min(text_xcors), max(text_xcors)]
+        vert_cords = [min(text_ycors), max(text_ycors)]
+
+        print(horz_cords)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # NEED TO ACCOUNT FOR MARGINS BEFORE DRAWING ARCS
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        # Draw horizontal lines above and below our text
+        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], vert_cords[0]), (horz_cords[1], vert_cords[0])])
+        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], vert_cords[1]), (horz_cords[1], vert_cords[1])])
+
+        # Draw vertical lines besides our text
+        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], vert_cords[0]), (horz_cords[0], vert_cords[1])])
+        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[1], vert_cords[0]), (horz_cords[1], vert_cords[1])])
+
+    def scroll(self, screen, background, text):  # NEED TO MAKE THIS SMOOTH??
+        screen.blit(background, self.position, self.position)
+        self.scrollH[1] -= 8
+        self.position = self.image.get_rect().move(self.scrollH[0], self.scrollH[1])
+        screen.blit(self.image, self.position)  # Update the screen
+        self.addtext(screen, self, text)  # Add text on top of chat bubbles (blit in function)
+        #screen.blit(self.image, self.position)  # Update the screen
+
+        # DO I NEED TO BLIT OVER TEXT AREA????
+        return self.scrollH[1]  # Update our bubble object's y cor
+
+
+# def advance_conversation():  #  Advance the conversation forward by moving old texts up, erasing ones off-screen
+
+
+def background_creator(input_color, screen):  # Create a simple background
+    bg = pg.Surface(screen.get_size())  # Create a surface the size of our screen
+                                        # that will serve as background
+    bg.convert()
+    bg.fill(input_color)  # Fill bg with color
+    return bg
+
