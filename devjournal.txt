@@ -1,0 +1,67 @@
+Started: 10/23/2018
+Michael Somkuti
+
+Accomplished: made a module (hookedfuns.py) to hold all of my functions and classes,
+              used import statement
+
+              Dialogue in dictionaries
+
+              11/8/2018:  Text blitting over images, addText function
+                          Appending lines of characters is not exiting while loop!
+
+              11/17/2018: Splitting of dialogue stored in conversation dictionaries,
+                          so split in clean lines under a certain width threshold
+
+                          Note: It still needs tweaking
+
+                          This is the basis for how text will appear in each message,
+                          and will provide the basis for how much a text will have to
+                          extend vertically for each line of dialogue.
+
+              11/22/2018: Discovered that text adding function still does not work as intended
+                          try it with conv_Ashley[5]. . .
+
+                          Started the bubble draw function, need to make it draw correctly
+                          Modified add_text so it found coordinates for each line of text
+
+                          Note: I really need to start working with more surfaces. There are some
+                          fundamental design flaws in this program that I need to address due to
+                          this. Start version control ASAP!!!
+
+              11/23/2018  Made is so the background of each chat is now initialized as a surface when chat bubbles
+                          are instantiated. Chat bubbles surfaces will now be drawn in relation to the dimensions of
+                          the window size.
+
+                          Note: There is a fundamental design change here. I want this to look more like a natural text
+                          conversation, so I will be blitting lines of dialogue one by one beneath each other, instead
+                          of side by side.
+
+                          This surface, chat_bg, is dynamic! Before going into this, I want to note
+                          that I finally fixed the slicing of each line of dialogue in addtext(). This is now
+                          dependent on the max size of chat_bg. However, when the dialogue is sliced into lines of
+                          text, chat_bg scales to the total length of the lines when they are rendered. I.E. when a
+                          entry of dialogue is split into 5 lines of strings, chat_bg will scale height wise
+                          (and length wise if there is only one line of short text) to the to the sum of all all 5
+                          strings heights + line spacing.
+
+                          Also, lines of text now have correct spacing, I.E. "Exampleoftxt" renders as "Example of txt"
+
+                          Note: Margins for the lines inside of chat_bg are still a bit wonky, but the current version
+                          works decently (including line spacing).
+
+                          Note: For some dialogue entries, the width of chat_bg changes after scrolling
+
+                          Note: There is no dialogue that would be split into enough lines that would their collective
+                          height be greater than the maximum height of chat_bg, but I should establish an error catch
+                          nonetheless. . .
+
+
+Next: Make function that generates title screen
+
+      Make text rectangles rounded
+
+      Ensure that margins are being generated correctly
+
+      Create better way to erase chat bubbles off screen
+
+      Fix scaling of chat_bg
