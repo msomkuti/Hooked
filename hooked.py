@@ -82,16 +82,6 @@ while inTitle == 1:  # Enter title screen, stay there until start is clicked
 # pg.draw.arc(screen, (255, 0, 0), (0, 100, 0, 20), 0, 0.7853982, 2)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# TEST BUBBLES
-
-chatBubble = Bubble(0, screenDims)  # Instantiate chat bubbles
-chatBubble1 = Bubble(0, screenDims)
-
-chatBubbles = {0: chatBubble,  # Dictionary that holds the chat bubbles
-               1: chatBubble1}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # NEED TO MAKE A DICTIONARY FOR THE CREATION OF INDIVIDUAL CHAT BUBBLES AND THEIR DESTRUCTION
 # ESSENTIALLY, MAKE THE SURFACE NOT BLIT TO SCREEN IN THE NEXT ITERATION OF THE DRAW LOOP
 
@@ -122,11 +112,23 @@ convAshley = {0: "Hi, who's this?",
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# ENTER THE CONVERSATION LOOP
+# Instantiate dictionaries of chat bubbles
+
+ashleyBubbles = dict.fromkeys(range(0, len(convAshley.keys())), Bubble(0, screenDims))  # SHOULD BE SENT
+unknownBubbles = dict.fromkeys(range(0, len(convUnknown.keys())), Bubble(0, screenDims)) # SHOULD BE RECIEVED
+
+# WORKING ORIGINAL CHAT BUBBLES
+chatBubble = Bubble(0, screenDims)  # Instantiate chat bubbles
+chatBubble1 = Bubble(0, screenDims)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CREATE OUR BACKGROUND, THEN ENTER THE CONVERSATION LOOP
 
 convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversation
 screen.blit(convoBG, (0, 0))
 pg.display.update()
+
 
 while 1:  # Enter main game loop
     for event in pg.event.get():  # Event queue
@@ -134,12 +136,29 @@ while 1:  # Enter main game loop
 
             # Should I error catch the chat bubbles? probably figure out what to do instead
 
-            #print(chatBubble.position)
-            #print(chatBubble1.position)
+            # print(chatBubble.position)
+            # print(chatBubble1.position)
 
             for i in range(1):
-                chatBubble.scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
-                #chatBubble1.scroll(screen, convoBG, 'ok')  # Move messages upwards when enter is pushed
+                chatBubble1.scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
+                chatBubble1.position[1] = chatBubble.position[1] + chatBubble.position[3]
+                chatBubble.scroll(screen, convoBG, convAshley[1])  # Move messages upwards when enter is pushed
+
+                screen.blit(chatBubble.chat_bg, chatBubble.position)
+                screen.blit(chatBubble1.chat_bg, chatBubble1.position)
+
+                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                # SCROLL FUNCTION DOES NOT WORK WELL WITH 2 BUBBLES FROM DICTIONARIES
+
+                # ashleyBubbles[1].scroll(screen, convoBG, convAshley[1])  # Move messages upwards when enter is pushed
+                # ashleyBubbles[0].scroll(screen, convoBG, convAshley[0])  # Move messages upwards when enter is pushed
+                #
+                # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+                #
+                # screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
+                # screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
+                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
                 pg.display.update()
                 pg.time.delay(10)
 

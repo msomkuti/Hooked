@@ -174,8 +174,8 @@ class Bubble:
         self.chat_bg = self.addtext(self.chat_bg, text)
         self.position = self.chat_bg.get_rect().move(self.scrollH[0], self.scrollH[1])
 
-        screen.blit(self.chat_bg, self.position)
-        pg.display.update()
+        # screen.blit(self.chat_bg, self.position)
+        # pg.display.update()
 
         return self.scrollH[1]  # Update our bubble object's y cor
 

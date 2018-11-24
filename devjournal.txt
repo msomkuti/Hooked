@@ -55,6 +55,14 @@ Accomplished: made a module (hookedfuns.py) to hold all of my functions and clas
                           height be greater than the maximum height of chat_bg, but I should establish an error catch
                           nonetheless. . .
 
+                          11:49 PM: I made it so now each character's bubbles are made via iteration. However, the
+                          scroll function and blitting them to the screen only works well when each bubble object is
+                          made separately and stored in variables. . .
+
+                          When made separately, I can blit multiple bubbles to the screen and have them spaced nicely.
+
+                          Note: I will make bubble spacing dynamic as well later
+
 
 Next: Make function that generates title screen
 
@@ -65,3 +73,5 @@ Next: Make function that generates title screen
       Create better way to erase chat bubbles off screen
 
       Fix scaling of chat_bg
+
+      Start to make it so multiple chats are blit to screen, make it work when bubbles are created in dictionary
