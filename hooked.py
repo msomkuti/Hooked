@@ -25,7 +25,8 @@ pg.init()  # Initialize pygame
 screenDims = [412, 732]  # Specify our dimensions
 screen = pg.display.set_mode((screenDims[0], screenDims[1]))  # Set our screen size
 
-# CREATION OF TITLE SCREEN/ PLACE THIS IN A WHILE LOOP OR FUNCTION
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# CREATION OF TITLE SCREEN / PLACE THIS IN A WHILE LOOP OR FUNCTION
 
 tBG = background_creator((0, 0, 255), screen)  # make our title screen's background
 
@@ -53,9 +54,11 @@ screen.blit(tBG, (0, 0))
 screen.blit(titleBox, titlePos)
 screen.blit(titleText, ttPos)
 pg.display.update()
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ENTER TITLE SCREEN
 inTitle = 1  # Stay in the title screen until they start game
-
 while inTitle == 1:  # Enter title screen, stay there until start is clicked
 
     for event in pg.event.get():
@@ -68,19 +71,10 @@ while inTitle == 1:  # Enter title screen, stay there until start is clicked
         if event.type == pg.QUIT:  # Quit if we want to
             pg.quit()
             sys.exit()
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversation
-
-
-# TEST ARCS
-
-screen.blit(convoBG, (0, 0))
-pg.display.update()
-
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # CREATION OF CHAT BUBBLES
-
-chat = pg.Surface((200, 200))  # Create a new surface which will hold the shape of our chat
-                                    # bubble
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # HERE WE WILL DRAW A RECTANGLE THAT WILL BE ESSENTIALLY A VECTOR IMAGE OF A CHAT BUBBLE
@@ -90,34 +84,20 @@ chat = pg.Surface((200, 200))  # Create a new surface which will hold the shape 
 # TEST ARC
 # pg.draw.arc(screen, (255, 0, 0), (0, 100, 0, 20), 0, 0.7853982, 2)
 
-
-# chat.fill((0, 0, 255))  # Make our chat bubble blue, WILL WANT TO FIX TO ONLY DRAW IN BUBBLE
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# TEST BUBBLE
-# chatDims = [200, 200]  # SHOULD GET COORDINATES FROM THE RECT OF CHAT
-#  chatBubble = Bubble(chat, 0, screenDims, chatDims)  # Make im into workable object
-# chatBubble.scale(chatDims[0], chatDims[1])  # Default bubble
+# TEST BUBBLES
+
+chatBubble = Bubble(0, screenDims)  # Instantiate chat bubbles
+chatBubble1 = Bubble(0, screenDims)
+
+chatBubbles = {0: chatBubble,  # Dictionary that holds the chat bubbles
+               1: chatBubble1}
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-chatBubble = Bubble(chat, 0, screenDims)  # Make im into workable object
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# SECOND TEST BUBBLE
-
-chatBubble1 = Bubble(chat, 0, screenDims)  # Make im into workable object
-# chatBubble1 = Bubble(chat, 0, screenDims, chatDims)  # Make im into workable object
-# chatBubble1.scale(chatDims[0], chatDims[1])  # Default bubble
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # NEED TO MAKE A DICTIONARY FOR THE CREATION OF INDIVIDUAL CHAT BUBBLES AND THEIR DESTRUCTION
 # ESSENTIALLY, MAKE THE SURFACE NOT BLIT TO SCREEN IN THE NEXT ITERATION OF THE DRAW LOOP
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-chatBubbles = {0: chatBubble,  # Dictionary that holds the chat bubbles
-               1: chatBubble1}
 
 convUnknown = {0: 'Hello Ashley',
                1: 'Look behind you',
@@ -142,22 +122,20 @@ convAshley = {0: "Hi, who's this?",
               6: "True...",
               7: "But that'd be like eating ur fam, right? Kinda weird."}  # Ashley's lines
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Ending line: They all die from climate change  # Lol
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# ENTER THE GAME LOOP
+# ENTER THE CONVERSATION LOOP
+
+convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversation
+screen.blit(convoBG, (0, 0))
+pg.display.update()
 
 while 1:  # Enter main game loop
     for event in pg.event.get():  # Event queue
         if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONUP):  # Advance our conversation   # conversation.spawnNext()
 
             # Should I error catch the chat bubbles? probably figure out what to do instead
-
-            screen.blit(chatBubble.image, chatBubble.position)
-            #screen.blit(chatBubble1.image, chatBubble1.position)
 
             #print(chatBubble.position)
             #print(chatBubble1.position)

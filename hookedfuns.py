@@ -6,84 +6,93 @@ from pygame.locals import *
 pg.init()
 
 class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
-    font = pg.font.SysFont(None, 32)  # Set our font
+    font = pg.font.SysFont(None, 32)  # Set our font, GET A NICER ONE IN HERE THOOOO
 
     # def __init__(self, image, sent, screenDims, chatDims):
-    def __init__(self, image, sent, screenDims):
-        self.image = image
-        self.horz_marg = int(screenDims[0] * 0.175)  # Horizontal margin for msgs from edge of screen
+    def __init__(self, sent, screenDims):
+        self.horz_marg = int(screenDims[0] * 0.12)  # Horizontal margin for msgs from edge of screen
         self.vert_marg = int(screenDims[1] * 0.15)  # Vertical margin to start scrolling from
         self.scrollH = [self.horz_marg, screenDims[1] - self.vert_marg]  # Scroll upwards from here, default (x,y) of bubbles
 
         # INITIALIZE CHAT SURFACES
         max_chat_dims = [int(screenDims[0] - self.horz_marg * 2), int(screenDims[1] - self.vert_marg * 2)]
-        print(max_chat_dims)
         self.chat_bg = pg.Surface((max_chat_dims[0], max_chat_dims[1]))  # Create the background for our chats
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # NEED TO FIX FORMATTING FOR SENT VS RECIEVED
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         if sent != 1:  # Formatting for sent v.s. received messages
-            self.position = image.get_rect().move(self.scrollH[0], self.scrollH[1])  # Position bubbles
-            self.image = pg.transform.flip(self.image, 1, 0)  # Flip our chat bubble on xaxis to face the correct way
+             self.position = self.chat_bg.get_rect().move(self.scrollH[0], self.scrollH[1])  # Position bubbles
+        #     self.image = pg.transform.flip(self.image, 1, 0)  # Flip our chat bubble on xaxis to face the correct way
+
         if sent == 1:
-            self.scrollH[0] = screenDims[0] - chatDims[0] - self.scrollH[0]
-            self.position = image.get_rect().move(self.scrollH[0], self.scrollH[1])
+             self.scrollH[0] = screenDims[0] - chatDims[0] - self.scrollH[0]
+             self.position = self.chat_bg.get_rect().move(self.scrollH[0], self.scrollH[1])
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # SCALE SHOULD BE CALLED FOR CHAT_BG AFTER GETTING RENDER SIZE FOR TEXT
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def scale(self, input_surface, width, height):  # Scale our bubble to size
-        # FIX THIS
-        pg.transform.scale(input_surface, (width, height))
+    def scale(self, input_surface, width, height):  # Scale our bubble to nicely hold rendered text
+
+        input_surface = pg.transform.scale(input_surface, (width, height))
+        return input_surface
 
     def addtext(self, chat_surface, text):
 
         imcors = chat_surface.get_rect()  # Get rect values of chat
+        txt_h_marg = int(imcors[2] * 0.02)
+        width_limit = - (txt_h_marg * 2)
         self.text = text.split()  # Text inside chat bubble
         lines = []  # Hold our new lines of text
 
-        numwords = len(self.text)  # Get num of words in msg
-        num_words = 0  # Index to keep track of words already used
+        total_words = len(self.text)  # Get num of words in msg
+        used = 0  # Index to keep track of words already used
+        cut_off = 0  # Start slice at start of array
 
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # ENTER WORD SLICING LOOP
+        # i = 0
         done = 0  # Exit condition
         while done == 0:
-            cut_off = numwords  # Start indx at end of list
-            texttemp = self.text[num_words: cut_off]
-            #print(texttemp)
-            rendercheck = ' '.join(texttemp)
+            # i += 1
+
+            texttemp = self.text[used: total_words]  # Slice our text starting at num words used, ending at end of array
+
+            cut_off = len(texttemp)  # Start slicing at end of remaining words
+            render_line = " ".join(texttemp)
 
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            # JOIN ALL WORDS WITH A SPACE IN BETWEEN
+            # OFFSET EACH LINE BY HORIZONTAL MESSAGE MARGIN
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-            rendersize = Bubble.font.size(rendercheck)  # Check how much space it will take to render msg
+            rendersize = Bubble.font.size(render_line)  # Check render size of possible line of text
 
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # STILL NOT WORKING CORRECTLY
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             if rendersize[0] > imcors[2]:  # If len of words > width of chat_surface
-                while rendersize[0] > imcors[2]:  # If the len of the msg is greater than width of bubble, split the msg
+                while rendersize[0] > imcors[2]:  # While  len of rendered dialogue > width of chat_surface
+                    cut_off = cut_off - 1
+                    texttemp = texttemp[0: cut_off]  # Cut off last word in array, track indx
+                                                     # NOTE: if a = '123' len(a) = 3, a[3:3] returns ''
 
-                    cut_off = cut_off - 1  # Keep track of indx of # of words we cut off
-                    texttemp = texttemp[num_words: cut_off]  # Cut off words until short enough, stop at cut_off
-                    # NOTE: text[2,3] will only get the 2nd word
+                    render_line = " ".join(texttemp)  # Join words with spaces
+                    rendersize = Bubble.font.size(render_line)  # Check render size of newly sliced array
+                                                                # Note: rendersize[0] is width
 
-                    rendercheck = ''.join(texttemp)
-                    rendersize = Bubble.font.size(rendercheck)  # See if our sliced text will fit
-
-                texttemp = texttemp[num_words: cut_off]
-
-            num_words = cut_off
-            line = rendercheck
+            line = render_line  # Append well formatted line of dialogue
             lines.append(line)
+            used = used + cut_off  # Sum num of words used in each appended line of dialogue
 
-            if num_words == numwords:  # Stop when we have gone through all words
-                                    # NOTE: if a = '123' len(a) = 3 and a[3:3] returns ''
+            # if i == 4:
+            #     done = 1
+
+            if used == total_words:  # Stop when sum of words in lines = total num words in self.text
                 done = 1
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         offset = 0  # Offset our lines of text when rendering
 
@@ -95,7 +104,7 @@ class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
         text_ycors = []  # Hold the y coordinates of our text
 
         render_imcors = imcors
-        sample_line = ''.join(lines[0])
+        sample_line = lines[0]
         rendersize = Bubble.font.size(sample_line)  # Every line will have same height
         render_imcors[1] = rendersize[1] * .4  # Establish top margin, by offsetting text render
 
@@ -105,7 +114,6 @@ class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         for line in lines:
-            line = ''.join(line)
             rendersize = Bubble.font.size(line)  # Render size of each line
             imcorstemp = render_imcors
 
@@ -115,8 +123,7 @@ class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
 
             text_ycors.append(imcorstemp[1])  # Append tuple containing old and new y coordinate
 
-        # EDIT THIS SO IT DRAWS TO chat_bg
-        self.bubble_draw(self.chat_bg, text_xcors, text_ycors)  # Draw our message box before blitting text
+        chat_surface = self.bubble_draw(self.chat_bg, text_xcors, text_ycors)  # Draw our msg box before blitting text
 
         for i in range(len(lines)):
             lines[i] = ''.join(lines[i])
@@ -144,7 +151,7 @@ class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
         #
         # ####################################################################
 
-        return [text_xcors, text_ycors]
+        return chat_surface
 
 
     def bubble_draw(self, chat_surface, text_xcors, text_ycors):  # SHOULD I ADD SCREEN DIMS?
@@ -168,29 +175,30 @@ class Bubble:  # NEED TO MAKE IT SO TEXT IS IN BUBBLES
         # SCALE chat_bg surface TO CORRECT LENGTH BEFORE RENDERING TEXT!!
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        chat_surface.fill((255,255,255), (horz_cords[0], 0, horz_cords[1], vert_cords[1]))
+        scale_dims = [horz_cords[1], vert_cords[1]]
+        chat_surface = self.scale(chat_surface, scale_dims[0], scale_dims[1])
+
+        chat_surface.fill((255, 255, 255), (horz_cords[0], 0, horz_cords[1], vert_cords[1]))
 
         # Draw horizontal lines above and below our text
-        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], 0), (horz_cords[1], 0)], 5)
+        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], 0), (horz_cords[1], 0)], 3)
         pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], vert_cords[1]), (horz_cords[1], vert_cords[1])], 3)
 
         # Draw vertical lines besides our text
         pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], 0), (horz_cords[0], vert_cords[1])], 3)
         pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[1], 0), (horz_cords[1], vert_cords[1])], 3)
 
+        return chat_surface
+
 
     def scroll(self, screen, background, text):  # NEED TO MAKE THIS SMOOTH??
         screen.blit(background, self.position, self.position)
         self.scrollH[1] -= 8
-        self.position = self.image.get_rect().move(self.scrollH[0], self.scrollH[1])
+        self.position = self.chat_bg.get_rect().move(self.scrollH[0], self.scrollH[1])
+        self.chat_bg = self.addtext(self.chat_bg, text)
+
         screen.blit(self.chat_bg, self.position)
-
-        #screen.blit(self.image, self.position)  # Update the screen
-        #self.addtext(self.image, text)  # Add text on top of chat bubbles (blit in function)
-
-        self.addtext(self.chat_bg, text)
         pg.display.update()
-        # DO I NEED TO BLIT OVER TEXT AREA????
         return self.scrollH[1]  # Update our bubble object's y cor
 
 
