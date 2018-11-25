@@ -56,10 +56,10 @@ while inTitle == 1:  # Enter title screen, stay there until start is clicked
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # HERE WE WILL DRAW A RECTANGLE THAT WILL BE ESSENTIALLY A VECTOR IMAGE OF A CHAT BUBBLE
 # ESSENTIALLY WILL HAVE TO DRAW AN ELIPSES, LOOK INTO PG.DRAW.ARC()
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # TEST ARC
 # pg.draw.arc(screen, (255, 0, 0), (0, 100, 0, 20), 0, 0.7853982, 2)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # NEED TO MAKE A DICTIONARY FOR THE CREATION OF INDIVIDUAL CHAT BUBBLES AND THEIR DESTRUCTION
@@ -70,13 +70,13 @@ convUnknown = {0: 'Hello Ashley',
                2: 'No',
                3: 'My mother was a scarecrow, my grandmother was a scarecrow, '
                   'but for some reason I was not born a scarecrow. I was born a pumpkin',
-               4: 'Right? Like my mom and grandma are so cool and Im a fucking pumpkin? WTF?',
+               4: 'Right? Like my mom and grandma are so cool and Im a pumpkin? WTF?',
                5: 'Btw Im going to murder you of course',
                6: 'Yeah, you ever get killed by a pumpkin Ashley? Huh?',
-               7: 'Oh shit, you ok? Well I guess it doesnt matter because Im going to kill you',
+               7: 'Oh, you ok? Well I guess it doesnt matter because Im going to kill you',
                8: 'I mean I could kill you in, like a festive way if ya want. Like I could poison'
                   'you with a pumpkin spice latte',
-               9: 'Damn, you right'}  # Pumpkin's lines
+               9: 'You right'}  # Pumpkin's lines
 
 
 convAshley = {0: "Hi, who's this?",
@@ -92,20 +92,18 @@ convAshley = {0: "Hi, who's this?",
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Instantiate dictionaries of chat bubbles
+# Instantiate arrays of chat bubbles
+numAsh = len(convAshley.keys())  # Num lines of dialogue
+numUnk = len(convUnknown.keys())  # Num lines of dialogue
 
-ashleyBubbles = dict.fromkeys(range(0, len(convAshley.keys())), Bubble(0, screenDims))  # SHOULD BE SENT
-unknownBubbles = dict.fromkeys(range(0, len(convUnknown.keys())), Bubble(0, screenDims))  # SHOULD BE RECIEVED
+ashleyBubbles = [Bubble(0, screenDims, convAshley[i]) for i in range(numAsh)]
+unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
 
-ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+print(ashleyBubbles)
+print(unknownBubbles)
 
-print(ashleyBubbles[0])
-print(ashleyBubbles[1].position)
+print(ashleyBubbles[1].text)
 print(ashleyBubbles[0].position)
-
-# WORKING ORIGINAL CHAT BUBBLES
-chatBubble = Bubble(0, screenDims)  # Instantiate chat bubbles
-chatBubble1 = Bubble(0, screenDims)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,41 +113,34 @@ convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversati
 screen.blit(convoBG, (0, 0))
 pg.display.update()
 
+ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+
+
 while 1:  # Enter main game loop
     for event in pg.event.get():  # Event queue
-        if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONUP):  # Advance our conversation   # conversation.spawnNext()
+        if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONUP):  # Advance our conversation
+
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            # SCROLL DIFFERENTLY DEPENDING ON WHETHER OR NOT INPUT IS A CLICK OR MOUSE WHEEL
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             for i in range(8):
-                print(chatBubble.position)
-                print(chatBubble1.position)
-
-                chatBubble1.scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
-                chatBubble.scroll(screen, convoBG, convAshley[1])  # Move messages upwards when enter is pushed
-
-                chatBubble1.position[1] = chatBubble.position[1] + chatBubble.position[3] * 1.25
-
-                screen.blit(chatBubble.chat_bg, chatBubble.position)
-                screen.blit(chatBubble1.chat_bg, chatBubble1.position)
-
                 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 # SCROLL FUNCTION DOES NOT WORK WELL WITH 2 BUBBLES FROM DICTIONARIES
-                # print(ashleyBubbles[1].position)
-                # print(ashleyBubbles[0].position)
-                #
-                # #print(ashleyBubbles[0].position)
-                # ashleyBubbles[1].scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
-                # ashleyBubbles[0].scroll(screen, convoBG, convAshley[0])  # Move messages upwards when enter is pushed
-                #
-                #
-                # #ashleyBubbles[0].scroll(screen, convoBG, convAshley[0])  # Move messages upwards when enter is pushed
-                #
-                #
-                # screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
-                # screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
+                print(ashleyBubbles[1].position)
+                print(ashleyBubbles[0].position)
+
+                ashleyBubbles[1].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
+                ashleyBubbles[0].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
+
+                # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+
+                screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
+                screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
                 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 pg.display.update()
-                pg.time.delay(10)
+                pg.time.delay(12)
 
             pg.display.update()
 

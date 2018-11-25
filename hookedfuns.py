@@ -9,11 +9,12 @@ pg.init()
 class Bubble:
     font = pg.font.SysFont(None, 32)  # Set our font, GET A NICER ONE IN HERE THOOOO
 
-    def __init__(self, sent, screenDims):
+    def __init__(self, sent, screenDims, text):
         self.horz_marg = int(screenDims[0] * 0.12)  # Horizontal margin for msgs from edge of screen
         self.vert_marg = int(screenDims[1] * 0.15)  # Vertical margin to start scrolling from
         self.scrollH = [self.horz_marg, screenDims[1] - self.vert_marg]  # Scroll up from default (x,y) of bubbles
 
+        self.text = text
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Initialize chat surfaces
         max_chat_dims = [int(screenDims[0] - self.horz_marg * 2), int(screenDims[1] - self.vert_marg * 2)]
@@ -44,12 +45,12 @@ class Bubble:
         return input_surface
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    def addtext(self, chat_surface, text):
+    # def addtext(self, chat_surface, text):
+    def addtext(self, chat_surface):
 
         imcors = chat_surface.get_rect()  # Get rect values of chat
         txt_h_marg = int(imcors[2] * 0.02)  # Offset our text by horizontal margins
 
-        self.text = text.split()  # Text inside chat bubble
         lines = []  # Hold our new lines of text
 
         total_words = len(self.text)  # Get num of words in msg
@@ -64,8 +65,7 @@ class Bubble:
             texttemp = self.text[used: total_words]  # Slice our text starting at num words used, ending at end of array
 
             cut_off = len(texttemp)  # Start slicing at end of remaining words
-            render_line = " ".join(texttemp)
-            rendersize = Bubble.font.size(render_line)  # Check render size of possible line of dialogue
+            rendersize = Bubble.font.size(texttemp)  # Check render size of possible line of dialogue
 
             if rendersize[0] > imcors[2] - txt_h_marg * 2:  # If width(dialogue) > width(chat_surface) + margins
                 while rendersize[0] > imcors[2] - txt_h_marg * 2:
@@ -73,10 +73,10 @@ class Bubble:
                     texttemp = texttemp[0: cut_off]  # Cut off last word in array, track indx
                                                      # Note: if a = '123' len(a) = 3, a[3:3] returns ''
 
-                    render_line = " ".join(texttemp)  # Join words with spaces
-                    rendersize = Bubble.font.size(render_line)  # Check render size of newly sliced array
+                    rendersize = Bubble.font.size(texttemp)  # Check render size of newly sliced array
 
-            line = render_line  # Append well formatted line of dialogue
+            line = texttemp  # Append well formatted line of dialogue
+
             lines.append(line)
             used = used + cut_off  # Sum num of words used in each appended line of dialogue
 
@@ -166,9 +166,12 @@ class Bubble:
 
         return chat_surface
 
-    def scroll(self, screen, background, text):  # NEED TO MAKE THIS SMOOTHER??
+    # def scroll(self, screen, background, text):  # NEED TO MAKE THIS SMOOTHER??
+    def scroll(self, screen, background):  # NEED TO MAKE THIS SMOOTHER??
+
         screen.blit(background, self.position)  # Draw over old position
-        self.chat_bg = self.addtext(self.chat_bg, text)
+        # self.chat_bg = self.addtext(self.chat_bg, text)
+        self.chat_bg = self.addtext(self.chat_bg)
         self.position[1] -= 8  # Move chat upwards
         # screen.blit(self.chat_bg, self.position)
         # pg.display.update()
@@ -208,3 +211,28 @@ def title_screen(screen, screen_dimensions):
     screen.blit(titleText, ttPos)
 
     return titlePos  # Return position of title box, used to start game
+
+
+# def setup(ashleyBubbles, unknownBubbles):
+#     for bub in ashleyBubbles:
+#         if bub.position[1] > screenDims[1]:
+#             screen.blit(bub.chat_bg, bub.position)
+#
+#     for bub in unknownBubbles:
+#         if bub.position[1] > screenDims[1]:
+#             screen.blit(bub.chat_bg, bub.position)
+#
+#
+#
+# def advance_conversation(ashleyBubbles, unknownBubbles, screen, screenDims):
+#     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#     # ACCOUNT FOR MESSAGE SPACING
+#     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#     for bub in ashleyBubbles:
+#         if bub.position[1] > screenDims[1]:
+#             screen.blit(bub.chat_bg, bub.position)
+#
+#     for bub in unknownBubbles:
+#         if bub.position[1] > screenDims[1]:
+#             screen.blit(bub.chat_bg, bub.position)

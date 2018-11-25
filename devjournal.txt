@@ -28,7 +28,7 @@ Accomplished: made a module (hookedfuns.py) to hold all of my functions and clas
                           fundamental design flaws in this program that I need to address due to
                           this. Start version control ASAP!!!
 
-              11/23/2018  Made is so the background of each chat is now initialized as a surface when chat bubbles
+              11/23/2018: Made is so the background of each chat is now initialized as a surface when chat bubbles
                           are instantiated. Chat bubbles surfaces will now be drawn in relation to the dimensions of
                           the window size.
 
@@ -63,15 +63,18 @@ Accomplished: made a module (hookedfuns.py) to hold all of my functions and clas
 
                           Note: I will make bubble spacing dynamic as well later
 
+              11/25/2018: Title screen now generated from function in hookedfuns.py. Chat bubbles for each character are
+                          now generated dynamically as an array of objects reliant on the number of keys in the dialogue
+                          dictionary for each character. Each bubble is also now initialized with its respective
+                          dialogue entry as self.text rather than inputting it into the scroll function.
 
-Next: Make function that generates title screen
 
-      Make text rectangles rounded
+Next: Make text rectangles rounded
 
       Ensure that margins are being generated correctly
 
-      Create better way to erase chat bubbles off screen
-
       Fix scaling of chat_bg
 
-      Start to make it so multiple chats are blit to screen, make it work when bubbles are created in dictionary
+      Animate text scrolling in function
+
+      Create conditional to stop blitting of bubbles off screen
