@@ -20,22 +20,23 @@ import sys, os
 from pygame.locals import *
 from hookedfuns import *  # Import functions from another file, GET OTHER ONES WORKING
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Start pygame and set up our display/screen
 pg.init()  # Initialize pygame
-
 screenDims = [412, 732]  # Specify our dimensions
 screen = pg.display.set_mode((screenDims[0], screenDims[1]))  # Set our screen size
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# CREATION OF TITLE SCREEN / PLACE THIS IN A WHILE LOOP OR FUNCTION
-
+# Generate title screen
 titlePos = title_screen(screen, screenDims)  # Function that generates screen
 pg.display.update()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ENTER TITLE SCREEN
-inTitle = 1  # Stay in the title screen until they start game
-while inTitle == 1:  # Enter title screen, stay there until start is clicked
+inTitle = 1  # Stay in the title screen until start clicked
+while inTitle == 1:  # Enter title screen
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # CAN I MAKE ANIMATION WHERE CLICKED? EXTRA
@@ -62,9 +63,7 @@ while inTitle == 1:  # Enter title screen, stay there until start is clicked
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# NEED TO MAKE A DICTIONARY FOR THE CREATION OF INDIVIDUAL CHAT BUBBLES AND THEIR DESTRUCTION
-# ESSENTIALLY, MAKE THE SURFACE NOT BLIT TO SCREEN IN THE NEXT ITERATION OF THE DRAW LOOP
-
+# Hard code the dialogue for each character into dictionaries
 convUnknown = {0: 'Hello Ashley',
                1: 'Look behind you',
                2: 'No',
@@ -77,7 +76,6 @@ convUnknown = {0: 'Hello Ashley',
                8: 'I mean I could kill you in, like a festive way if ya want. Like I could poison'
                   'you with a pumpkin spice latte',
                9: 'You right'}  # Pumpkin's lines
-
 
 convAshley = {0: "Hi, who's this?",
               1: "Are you a scarecrow?",
@@ -98,25 +96,15 @@ numUnk = len(convUnknown.keys())  # Num lines of dialogue
 
 ashleyBubbles = [Bubble(0, screenDims, convAshley[i]) for i in range(numAsh)]
 unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
-
-# print(ashleyBubbles)
-# print(unknownBubbles)
-#
-# print(ashleyBubbles[1].text)
-# print(ashleyBubbles[0].position)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Create our background, setup, then enter event catcher
-
 convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversation
 screen.blit(convoBG, (0, 0))
 pg.display.update()
 
-
 dialogue = setup(ashleyBubbles, unknownBubbles, screenDims)  # Add lines of dialogue to bubbles, and scale their surface
-# ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3] + ashleyBubbles[1].vert_marg
-
 
 while 1:  # Enter main game loop
     for event in pg.event.get():  # Event queue
@@ -127,19 +115,6 @@ while 1:  # Enter main game loop
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             for i in range(8):
-                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                # # SCROLL FUNCTION DOES NOT WORK WELL WITH 2 BUBBLES FROM DICTIONARIES
-                # print(ashleyBubbles[1].position)
-                # print(ashleyBubbles[0].position)
-                #
-                # ashleyBubbles[1].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
-                # ashleyBubbles[0].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
-                #
-                # # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
-                #
-                # screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
-                # screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
-                # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 advance_conversation(dialogue, screen, screenDims, convoBG)
 
@@ -147,15 +122,6 @@ while 1:  # Enter main game loop
                 pg.time.delay(12)
 
             pg.display.update()
-
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            # MAKE A WAY OF DELETING OLD CHATS
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-            # if chatBubble.position[1] < -chatDims[1]:  # If height of chat bubble off screen, destroy it
-            #     del chatBubble  # need to fix the way this erases, remove from dictionary?
-            #                     # or move it to a new one of past conversations
-            #     pass
 
         if event.type == pg.QUIT:
             pg.quit()
