@@ -238,30 +238,37 @@ def setup(ashleyBubbles, unknownBubbles, screenDims):
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Create our dialogue in the proper order
+    # ACCOUNT FOR STAGE DIRECTIONS. MAYBE DRAW IMAGES?
+    page_0 = [unknownBubbles[0], ashleyBubbles[0], unknownBubbles[1], ashleyBubbles[1], unknownBubbles[2]]
+    page_1 = [unknownBubbles[3], ashleyBubbles[2]]
+    page_2 = [unknownBubbles[4], unknownBubbles[5], ashleyBubbles[3], ashleyBubbles[4], unknownBubbles[6]]
+    page_3 = [ashleyBubbles[5], unknownBubbles[7], ashleyBubbles[6]]
+    page_4 = [unknownBubbles[8], ashleyBubbles[7], unknownBubbles[9]]
+    dialogue = page_0 + page_1 + page_2 + page_3 + page_4
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # NEED TO FIX THIS, SPACE OUT BUBBLES FROM ARRAY OF DIALOGUE IN PROPER ORDER
     # Space out our bubbles
     # For each bubble, move it down by adding (height of prev bubble + spacing) to current y coordinate
-    for i in range(1, len(ashleyBubbles)):
-        y_coordinate = ashleyBubbles[i-1].position[1] + ashleyBubbles[i-1].position[3]
-        ashleyBubbles[i].position[1] = y_coordinate + bub_spacing
-        print(ashleyBubbles[i].position[1])
+    # for i in range(1, len(ashleyBubbles)):
+    #     y_coordinate = ashleyBubbles[i-1].position[1] + ashleyBubbles[i-1].position[3]
+    #     ashleyBubbles[i].position[1] = y_coordinate + bub_spacing
+    #     print(ashleyBubbles[i].position[1])
 
-
-    for i in range(1, len(unknownBubbles)):
-        y_coordinate = unknownBubbles[i-1].position[1] + unknownBubbles[i - 1].position[3]
-        unknownBubbles[i].position[1] = y_coordinate + bub_spacing
-        print(unknownBubbles[i].position[1])
+    for i in range(1, len(dialogue)):
+        y_coordinate = dialogue[i-1].position[1] + dialogue[i-1].position[3]
+        dialogue[i].position[1] = y_coordinate + bub_spacing
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    return
 
-def advance_conversation(ashleyBubbles, unknownBubbles, screen, screenDims):
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # ACCOUNT FOR MESSAGE SPACING
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    return dialogue
 
-    for bub in ashleyBubbles:
-        if bub.position[1] > screenDims[1]:
-            screen.blit(bub.chat_bg, bub.position)
 
-    for bub in unknownBubbles:
-        if bub.position[1] > screenDims[1]:
-            screen.blit(bub.chat_bg, bub.position)
+
+
+def advance_conversation(dialogue, screen, screenDims, background):
+    for bub in dialogue:
+        bub.scroll(screen, background)
+        #if bub.position[1] > screenDims[1]:
+        screen.blit(bub.chat_bg, bub.position)

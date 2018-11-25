@@ -107,14 +107,14 @@ unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# CREATE OUR BACKGROUND, THEN ENTER THE CONVERSATION LOOP
+# Create our background, setup, then enter event catcher
 
 convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversation
 screen.blit(convoBG, (0, 0))
 pg.display.update()
 
 
-setup(ashleyBubbles, unknownBubbles, screenDims)  # Add lines of dialogue to bubbles, and scale their surface
+dialogue = setup(ashleyBubbles, unknownBubbles, screenDims)  # Add lines of dialogue to bubbles, and scale their surface
 # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3] + ashleyBubbles[1].vert_marg
 
 
@@ -128,18 +128,20 @@ while 1:  # Enter main game loop
 
             for i in range(8):
                 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                # SCROLL FUNCTION DOES NOT WORK WELL WITH 2 BUBBLES FROM DICTIONARIES
-                print(ashleyBubbles[1].position)
-                print(ashleyBubbles[0].position)
+                # # SCROLL FUNCTION DOES NOT WORK WELL WITH 2 BUBBLES FROM DICTIONARIES
+                # print(ashleyBubbles[1].position)
+                # print(ashleyBubbles[0].position)
+                #
+                # ashleyBubbles[1].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
+                # ashleyBubbles[0].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
+                #
+                # # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+                #
+                # screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
+                # screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
+                # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                ashleyBubbles[1].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
-                ashleyBubbles[0].scroll(screen, convoBG)  # Move messages upwards when enter is pushed
-
-                # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
-
-                screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
-                screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
-                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                advance_conversation(dialogue, screen, screenDims, convoBG)
 
                 pg.display.update()
                 pg.time.delay(12)
