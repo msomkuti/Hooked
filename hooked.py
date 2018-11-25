@@ -28,31 +28,7 @@ screen = pg.display.set_mode((screenDims[0], screenDims[1]))  # Set our screen s
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # CREATION OF TITLE SCREEN / PLACE THIS IN A WHILE LOOP OR FUNCTION
 
-tBG = background_creator((0, 0, 255), screen)  # make our title screen's background
-
-# Can I MAKE THIS INTO A FUNCTION? CREATION OF START BUTTON
-titleBox = pg.Surface((200, 100))  # Create our title box
-                                   # CAN WE DRAW THIS INSTEAD?
-titleBox.convert()
-titleBox.fill((255, 255, 255))
-titlePos = titleBox.get_rect()
-
-titlePos.centerx = screenDims[0] / 2  # Center our title box
-titlePos.centery = screenDims[1] / 2
-
-# CAN I MAKE A FONT FUNCTION???
-font = pg.font.SysFont(None, 48)  # Set our font
-
-titleText = font.render('Hooked', True, (0, 0, 0))  #Render that font to a surface
-ttPos = titleText.get_rect()  # Get coordinates of our text
-ttPos.center = titlePos.center  # Center our text in the title box
-
-# Update our screen to show the title
-
-
-screen.blit(tBG, (0, 0))
-screen.blit(titleBox, titlePos)
-screen.blit(titleText, ttPos)
+titlePos = title_screen(screen, screenDims)  # Function that generates screen
 pg.display.update()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -60,6 +36,10 @@ pg.display.update()
 # ENTER TITLE SCREEN
 inTitle = 1  # Stay in the title screen until they start game
 while inTitle == 1:  # Enter title screen, stay there until start is clicked
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # CAN I MAKE ANIMATION WHERE CLICKED? EXTRA
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     for event in pg.event.get():
         if event.type == pg.MOUSEBUTTONUP:
@@ -115,7 +95,13 @@ convAshley = {0: "Hi, who's this?",
 # Instantiate dictionaries of chat bubbles
 
 ashleyBubbles = dict.fromkeys(range(0, len(convAshley.keys())), Bubble(0, screenDims))  # SHOULD BE SENT
-unknownBubbles = dict.fromkeys(range(0, len(convUnknown.keys())), Bubble(0, screenDims)) # SHOULD BE RECIEVED
+unknownBubbles = dict.fromkeys(range(0, len(convUnknown.keys())), Bubble(0, screenDims))  # SHOULD BE RECIEVED
+
+ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+
+print(ashleyBubbles[0])
+print(ashleyBubbles[1].position)
+print(ashleyBubbles[0].position)
 
 # WORKING ORIGINAL CHAT BUBBLES
 chatBubble = Bubble(0, screenDims)  # Instantiate chat bubbles
@@ -129,31 +115,34 @@ convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversati
 screen.blit(convoBG, (0, 0))
 pg.display.update()
 
-
 while 1:  # Enter main game loop
     for event in pg.event.get():  # Event queue
         if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONUP):  # Advance our conversation   # conversation.spawnNext()
 
-            # Should I error catch the chat bubbles? probably figure out what to do instead
+            for i in range(8):
+                print(chatBubble.position)
+                print(chatBubble1.position)
 
-            # print(chatBubble.position)
-            # print(chatBubble1.position)
-
-            for i in range(1):
                 chatBubble1.scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
-                chatBubble1.position[1] = chatBubble.position[1] + chatBubble.position[3]
                 chatBubble.scroll(screen, convoBG, convAshley[1])  # Move messages upwards when enter is pushed
+
+                chatBubble1.position[1] = chatBubble.position[1] + chatBubble.position[3] * 1.25
 
                 screen.blit(chatBubble.chat_bg, chatBubble.position)
                 screen.blit(chatBubble1.chat_bg, chatBubble1.position)
 
                 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 # SCROLL FUNCTION DOES NOT WORK WELL WITH 2 BUBBLES FROM DICTIONARIES
-
-                # ashleyBubbles[1].scroll(screen, convoBG, convAshley[1])  # Move messages upwards when enter is pushed
+                # print(ashleyBubbles[1].position)
+                # print(ashleyBubbles[0].position)
+                #
+                # #print(ashleyBubbles[0].position)
+                # ashleyBubbles[1].scroll(screen, convoBG, convAshley[5])  # Move messages upwards when enter is pushed
                 # ashleyBubbles[0].scroll(screen, convoBG, convAshley[0])  # Move messages upwards when enter is pushed
                 #
-                # ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+                #
+                # #ashleyBubbles[0].scroll(screen, convoBG, convAshley[0])  # Move messages upwards when enter is pushed
+                #
                 #
                 # screen.blit(ashleyBubbles[0].chat_bg, ashleyBubbles[0].position)
                 # screen.blit(ashleyBubbles[1].chat_bg, ashleyBubbles[1].position)
