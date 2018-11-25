@@ -18,7 +18,7 @@
 import pygame as pg
 import sys, os
 from pygame.locals import *
-from hookedfuns import *  # Import functions from another file, GET OTHER ONES WORKING
+from hookedfuns import *  # Import necessary functions and classes
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Start pygame and set up our display/screen
@@ -94,7 +94,7 @@ convAshley = {0: "Hi, who's this?",
 numAsh = len(convAshley.keys())  # Num lines of dialogue
 numUnk = len(convUnknown.keys())  # Num lines of dialogue
 
-ashleyBubbles = [Bubble(0, screenDims, convAshley[i]) for i in range(numAsh)]
+ashleyBubbles = [Bubble(1, screenDims, convAshley[i]) for i in range(numAsh)]
 unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -112,14 +112,11 @@ while 1:  # Enter main game loop
 
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # SCROLL DIFFERENTLY DEPENDING ON WHETHER OR NOT INPUT IS A CLICK OR MOUSE WHEEL
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
             for i in range(8):
-
                 advance_conversation(dialogue, screen, screenDims, convoBG)
-
                 pg.display.update()
                 pg.time.delay(12)
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             pg.display.update()
 
