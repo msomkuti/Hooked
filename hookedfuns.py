@@ -3,6 +3,8 @@
 import pygame as pg
 import sys, os
 from pygame.locals import *
+from operator import attrgetter
+
 pg.init()
 
 
@@ -170,8 +172,6 @@ class Bubble:
     def scroll(self, screen, background):  # NEED TO MAKE THIS SMOOTHER??
 
         screen.blit(background, self.position)  # Draw over old position
-        # self.chat_bg = self.addtext(self.chat_bg, text)
-        self.chat_bg = self.addtext(self.chat_bg)
         self.position[1] -= 8  # Move chat upwards
         # screen.blit(self.chat_bg, self.position)
         # pg.display.update()
@@ -213,26 +213,55 @@ def title_screen(screen, screen_dimensions):
     return titlePos  # Return position of title box, used to start game
 
 
-# def setup(ashleyBubbles, unknownBubbles):
-#     for bub in ashleyBubbles:
-#         if bub.position[1] > screenDims[1]:
-#             screen.blit(bub.chat_bg, bub.position)
-#
-#     for bub in unknownBubbles:
-#         if bub.position[1] > screenDims[1]:
-#             screen.blit(bub.chat_bg, bub.position)
-#
-#
-#
-# def advance_conversation(ashleyBubbles, unknownBubbles, screen, screenDims):
-#     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#     # ACCOUNT FOR MESSAGE SPACING
-#     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-#     for bub in ashleyBubbles:
-#         if bub.position[1] > screenDims[1]:
-#             screen.blit(bub.chat_bg, bub.position)
-#
-#     for bub in unknownBubbles:
-#         if bub.position[1] > screenDims[1]:
-#             screen.blit(bub.chat_bg, bub.position)
+def setup(ashleyBubbles, unknownBubbles, screenDims):
+    # How many of smallest msg can fit on screen at once? ASSUMES 1st is smallest
+    # num_fit = screenDims[1] / ashleyBubbles[1].position[3]  #Static, ERASE LATER
+
+
+    # Add text and scale our bubbles
+    for bub in ashleyBubbles:
+        bub.chat_bg = bub.addtext(bub.chat_bg)
+
+    for bub in unknownBubbles:
+        bub.chat_bg = bub.addtext(bub.chat_bg)
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Calculate the spacing between texts
+    all_bubs = ashleyBubbles + unknownBubbles
+    min_size = min(all_bubs, key=attrgetter('position'))  # HOW DOES MIN WORK WITH RECT????
+    max_fit = int(screenDims[1] / min_size.position[3])  # Screen height / height of smallest text
+    good_fit = int(max_fit * (5/9))  # Only want to show 3/4 of max num bubbles that fit on screen
+
+    # Spacing calculated by finding height(bubbles) if only int(good_fit) fit on screen,
+    # then take difference between height(good_fit bubbles) and height(min bubble size)
+    bub_spacing = (screenDims[1] / good_fit) - min_size.position[3]
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Space out our bubbles
+    # For each bubble, move it down by adding (height of prev bubble + spacing) to current y coordinate
+    for i in range(1, len(ashleyBubbles)):
+        y_coordinate = ashleyBubbles[i-1].position[1] + ashleyBubbles[i-1].position[3]
+        ashleyBubbles[i].position[1] = y_coordinate + bub_spacing
+        print(ashleyBubbles[i].position[1])
+
+
+    for i in range(1, len(unknownBubbles)):
+        y_coordinate = unknownBubbles[i-1].position[1] + unknownBubbles[i - 1].position[3]
+        unknownBubbles[i].position[1] = y_coordinate + bub_spacing
+        print(unknownBubbles[i].position[1])
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    return
+
+def advance_conversation(ashleyBubbles, unknownBubbles, screen, screenDims):
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # ACCOUNT FOR MESSAGE SPACING
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    for bub in ashleyBubbles:
+        if bub.position[1] > screenDims[1]:
+            screen.blit(bub.chat_bg, bub.position)
+
+    for bub in unknownBubbles:
+        if bub.position[1] > screenDims[1]:
+            screen.blit(bub.chat_bg, bub.position)

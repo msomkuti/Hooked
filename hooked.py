@@ -99,11 +99,11 @@ numUnk = len(convUnknown.keys())  # Num lines of dialogue
 ashleyBubbles = [Bubble(0, screenDims, convAshley[i]) for i in range(numAsh)]
 unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
 
-print(ashleyBubbles)
-print(unknownBubbles)
-
-print(ashleyBubbles[1].text)
-print(ashleyBubbles[0].position)
+# print(ashleyBubbles)
+# print(unknownBubbles)
+#
+# print(ashleyBubbles[1].text)
+# print(ashleyBubbles[0].position)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,7 +113,9 @@ convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversati
 screen.blit(convoBG, (0, 0))
 pg.display.update()
 
-ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3]
+
+setup(ashleyBubbles, unknownBubbles, screenDims)  # Add lines of dialogue to bubbles, and scale their surface
+# ashleyBubbles[1].position[1] = ashleyBubbles[1].position[1] + ashleyBubbles[0].position[3] + ashleyBubbles[1].vert_marg
 
 
 while 1:  # Enter main game loop
