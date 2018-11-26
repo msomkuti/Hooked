@@ -68,8 +68,79 @@ Accomplished: made a module (hookedfuns.py) to hold all of my functions and clas
                           dictionary for each character. Each bubble is also now initialized with its respective
                           dialogue entry as self.text rather than inputting it into the scroll function.
 
+                          Note: Formatting for sent versus recieved texts finally work! They will be places on different
+                          sides of the screen and the base color for texts / msg outline changes as well.
+
+                          Fundamental design change: Creation of a setup function. This function instantiates previously
+                          mentioned arrays of Bubble objects. Each bubble object is then initialized with the proper
+                          line of dialogue.
+
+                          Note: The following is about the setup function, until noted otherwise~
+
+                          Each bubble's dialogue is then formatted to correctly in relation to max bubble size, followed
+                          by the dynamic scaling of the bubble's background surface to the rect values of the text,
+                          formatting the text nicely inside.
+
+                          New feature: Each bubble is now also spaced nicely. This spacing is calculated by finding the
+                          bubble that has the smallest height (after text is rendered and its surface is scaled).
+                          This will be referenced as min_height from now on. Then, it is calculated how many of these
+                          small bubbles could fit into the our screen (max_fit). However, filling the screen with
+                          bubbles would not look good, so it is chosen that only up to 5/9 of max_fit should be shown on
+                          screen at once. Then, the height of a hypothetical bubble is calculated such that the number
+                          of hypothetical bubbles needed to fill the screen would be 5/9th of max_fit, stored as
+                          good_height. Taking the difference between good_height and the smallest height
+                          yields us the spacing between each bubble, stored as bub_spacing.
+
+                          It also turned out to be a good fix to store all lines of dialogue (regardless of the
+                          character that "says" it) in one array, where each bubble is in the correct order to the
+                          story. I had to hard code the order.
+
+                          Note: This hard coded order should be replaced with a fix that imports dialogue text and order
+                          of each line of dialogue from a CSV
+
+                          The set up function uses the respective height of each bubble and bub_spacing, to change the
+                          (x, y) coordinates of each bubble. This spaces out the bubbles properly so that clicking the
+                          mouse or pushing a keyboard key blits and moves the bubbles across the screen nicely. If the
+                          bubble is a recieved "text", the bubble's x coordinate is changed so it is aligned on the
+                          right. Otherwise, bubbles are aligned on the left.
+
+                          Dialogue and bub_spacing are returned for access in the main script, as they will be needed
+                          to properly advance the "conversation."
+
+                          Note: This concludes the explanation of setup~
+
+                          Note: Functions are now alphabetical! ( Also inside the Bubble class )
+                                Also removed some comments and unused variables in the scroll and Bubble.addText()
+                                functions as a result of new initialization variables.
+
+                          The title screen is now also generated in a function! It returns the position of the rectangle
+                          that holds the rect of the surface that holds the title text. The user needs to click within
+                          these coordinates to advance to the next screen.
+
+                          Events are also now handled differently in the conversation screen. The conversation scrolls
+                          differently depending on the type of input. If the user is scrolling, the dialogue moves
+                          upwards at a different rate than if the user is pressing a single key / clicking a mouse
+                          button. This makes the advancement of the conversation feel more natural. I am assuming here
+                          that when a user presses a single key, they expect the conversation to move more quickly.
+                          It would be uncomfortable to have to mash one key to make the dialogue move forward. A delay
+                          is used after each display update to ensure smooth animation.
+
+                          Note: I think the way the conversation advances can be improved . . .
+                                May want to make texts come up one by one with each input. . . ( maybe only apply this
+                                to single key downs and not scrolling )
+
+
+                          There is also a new function, advance_conversation(), that moves all bubbles across the screen
+                          when inputs are pressed. It also contains a conditional that controls which bubbles are
+                          blitted to the screen. Bubbles are only blitted to the screen if they are entirely on the
+                          screen. This conditional can be improved. . . I think . . .
+
+                          This was a BIG update, but the quest to make this ~ f u l l y  d y n a m i c ~ continues.
+
 
 Next: Make text rectangles rounded
+
+      MAKE END CONDITION!!
 
       Ensure that margins are being generated correctly
 
@@ -77,4 +148,19 @@ Next: Make text rectangles rounded
 
       Animate text scrolling in function
 
-      Create conditional to stop blitting of bubbles off screen
+      Get better colors and font
+
+      Change to import texts from csv where one column is message, one column is index
+
+      Make sure everything is dynamic
+
+      Icons on side that scroll with text
+
+      Optional header with name / number of person conversation is with
+
+      Improve title screen
+
+      Extras:  Spacebar to automatically progress convo
+               New mesg indicator
+               Ability to scroll backwards
+               Can I make animation smoother?

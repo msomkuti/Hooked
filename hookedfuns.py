@@ -6,16 +6,18 @@ from pygame.locals import *
 from operator import attrgetter
 
 pg.init()
+# DO CLASSES GO FIRST?? I FORGET
 
 
 class Bubble:
-    font = pg.font.SysFont(None, 32)  # Set our font, GET A NICER ONE IN HERE THOOOO
+    font = pg.font.SysFont(None, 26)  # Set our font, GET A NICER ONE IN HERE THOOOO
 
     def __init__(self, sent, screenDims, text):
         self.horz_marg = int(screenDims[0] * 0.12)  # Horizontal margin for msgs from edge of screen
         self.vert_marg = int(screenDims[1] * 0.15)  # Vertical margin to start scrolling from
-        self.scrollH = [self.horz_marg, screenDims[1] - self.vert_marg]  # Scroll up from default (x,y) of bubbles
+        self.scrollH = [self.horz_marg, screenDims[1]] # - self.vert_marg]  # Scroll up from default (x,y) of bubbles
         self.text = text.split()
+        self.sent = sent
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Initialize chat surfaces
@@ -27,13 +29,14 @@ class Bubble:
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # NEED TO FIX FORMATTING FOR SENT VS RECIEVED
-        if sent != 1:  # Formatting for sent v.s. received messages
+        if self.sent != 1:  # Formatting for sent v.s. received messages
             self.position = self.chat_bg.get_rect().move(self.scrollH[0], self.scrollH[1])  # Position bubbles
-
-        if sent == 1:
+            self.color = (255, 0, 0)  # Change color based on character
+        if self.sent == 1:
             # Left cord of message account for right marg
             self.scrollH[0] = screenDims[0] - self.horz_marg - max_chat_dims[0]
             self.position = self.chat_bg.get_rect().move(self.scrollH[0], self.scrollH[1])
+            self.color = (0, 0, 255)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def addtext(self, chat_surface):
@@ -102,7 +105,7 @@ class Bubble:
         chat_surface = self.bubble_draw(self.chat_bg, text_xcors, text_ycors, txt_h_marg)
 
         for i in range(len(lines)):
-            good_line = Bubble.font.render(lines[i], True, (255, 0, 255))  # Render font to surface
+            good_line = Bubble.font.render(lines[i], True, self.color)  # Render font to surface
             chat_surface.blit(good_line, [text_xcors[1], text_ycors[i+1]])
 
         return chat_surface
@@ -140,12 +143,12 @@ class Bubble:
         chat_surface.fill((255, 255, 255), (horz_cords[0], 0, horz_cords[1], vert_cords[1]))
 
         # Draw horizontal lines above and below our text
-        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], 0), (horz_cords[1], 0)], 3)
-        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], vert_cords[1]), (horz_cords[1], vert_cords[1])], 3)
+        pg.draw.lines(chat_surface, self.color, 0, [(horz_cords[0], 0), (horz_cords[1], 0)], 3)
+        pg.draw.lines(chat_surface, self.color, 0, [(horz_cords[0], vert_cords[1]), (horz_cords[1], vert_cords[1])], 3)
 
         # Draw vertical lines besides our text
-        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[0], 0), (horz_cords[0], vert_cords[1])], 3)
-        pg.draw.lines(chat_surface, (255, 0, 0), 0, [(horz_cords[1], 0), (horz_cords[1], vert_cords[1])], 3)
+        pg.draw.lines(chat_surface, self.color, 0, [(horz_cords[0], 0), (horz_cords[0], vert_cords[1])], 3)
+        pg.draw.lines(chat_surface, self.color, 0, [(horz_cords[1], 0), (horz_cords[1], vert_cords[1])], 3)
 
         return chat_surface
 
@@ -161,8 +164,21 @@ class Bubble:
 
     def scroll(self, screen, background):  # NEED TO MAKE THIS SMOOTHER??
         screen.blit(background, self.position)  # Draw over old position
-        self.position[1] -= 8  # Move chat upwards
+        self.position[1] -= 8  # Move chat upwards, MAKE THIS DYNAMIC
         return
+
+
+def advance_conversation(dialogue, screen, screenDims, background, bub_spacing):
+    for bub in dialogue:
+        bub.scroll(screen, background)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Improve erasure of msgs AND BLITTING CONDITION
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        # Only blit msgs that are on screen
+        if bub_spacing < bub.position[1] + bub.position[3] < screenDims[1] - bub_spacing:
+            screen.blit(bub.chat_bg, bub.position)
 
 
 def background_creator(input_color, screen):  # Create a simple background
@@ -172,33 +188,16 @@ def background_creator(input_color, screen):  # Create a simple background
     return bg
 
 
-def title_screen(screen, screen_dimensions):
-    tBG = background_creator((0, 0, 255), screen)  # Make title screen's background
+def setup(convAshley, convUnknown, screenDims):
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Instantiate arrays of chat bubbles
+    numAsh = len(convAshley.keys())  # Num lines of dialogue
+    numUnk = len(convUnknown.keys())  # Num lines of dialogue
 
-    titleBox = pg.Surface((200, 100))  # Create title box
+    ashleyBubbles = [Bubble(1, screenDims, convAshley[i]) for i in range(numAsh)]
+    unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    titleBox.convert()
-    titleBox.fill((255, 255, 255))
-    titlePos = titleBox.get_rect()
-
-    titlePos.centerx = screen_dimensions[0] / 2  # Center title box
-    titlePos.centery = screen_dimensions[1] / 2
-
-    # CAN I MAKE A FONT FUNCTION???
-    font = pg.font.SysFont(None, 48)  # Set our font
-
-    titleText = font.render('Hooked', True, (0, 0, 0))  # Render font to a surface
-    ttPos = titleText.get_rect()  # Get coordinates of text
-    ttPos.center = titlePos.center  # Center text in the title box
-
-    # Update our screen to show the title
-    screen.blit(tBG, (0, 0))
-    screen.blit(titleBox, titlePos)
-    screen.blit(titleText, ttPos)
-    return titlePos  # Return position of title box, used to start game
-
-
-def setup(ashleyBubbles, unknownBubbles, screenDims):
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Add text and scale our bubbles
     for bub in ashleyBubbles:
@@ -212,11 +211,11 @@ def setup(ashleyBubbles, unknownBubbles, screenDims):
     all_bubs = ashleyBubbles + unknownBubbles
     min_size = min(all_bubs, key=attrgetter('position'))  # HOW DOES MIN WORK WITH RECT????
     max_fit = int(screenDims[1] / min_size.position[3])  # Screen height / height of smallest text
-    good_fit = int(max_fit * (5/9))  # Only want to show 3/4 of max num bubbles that fit on screen
-
+    good_fit = int(max_fit * (5/9))  # Only want to show 5/9 of max num bubbles that fit on screen
+    good_height = screenDims[1] / good_fit
     # Spacing calculated by finding height(bubbles) if only int(good_fit) fit on screen,
     # then take difference between height(good_fit bubbles) and height(min bubble size)
-    bub_spacing = (screenDims[1] / good_fit) - min_size.position[3]
+    bub_spacing = good_height - min_size.position[3]
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -232,20 +231,44 @@ def setup(ashleyBubbles, unknownBubbles, screenDims):
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Space out our bubbles
     # For each bubble, move it down by adding (height of prev bubble + spacing) to current y coordinate
+    # MAKE THE FOR LOOP INCLUDE THE INITIAL!!!
+    dialogue[0].position[1] = dialogue[1].position[1] - bub_spacing
+    if dialogue[0].sent != 1:
+        dialogue[0].position[0] = screenDims[0] - dialogue[0].horz_marg - dialogue[0].position[2]
+
     for i in range(1, len(dialogue)):
         y_coordinate = dialogue[i-1].position[1] + dialogue[i-1].position[3]
         dialogue[i].position[1] = y_coordinate + bub_spacing
+
+        if dialogue[i].sent != 1:
+            dialogue[i].position[0] = screenDims[0] - dialogue[i].horz_marg - dialogue[i].position[2]
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    return dialogue
+    return [dialogue, bub_spacing]
 
 
-def advance_conversation(dialogue, screen, screenDims, background):
-    for bub in dialogue:
-        bub.scroll(screen, background)
+def title_screen(screen, screen_dimensions):
+    tBG = background_creator((0, 0, 255), screen)  # Make title screen's background
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Improve erasure of msgs!
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # MAKE TITLE BOX SIZE DYNAMIC
+    titleBox = pg.Surface((200, 100))  # Create title box
 
-        if 0 < bub.position[1] < screenDims[1]:  # Only blit msgs that are on screen
-            screen.blit(bub.chat_bg, bub.position)
+    titleBox.convert()  # IS THIS NECESSARY??
+    titleBox.fill((255, 255, 255))
+    titlePos = titleBox.get_rect()
+
+    titlePos.centerx = screen_dimensions[0] / 2  # Center title box
+    titlePos.centery = screen_dimensions[1] / 2
+
+    # CAN I MAKE A FONT FUNCTION??? MAKE IT DYNAMIC???
+    font = pg.font.SysFont(None, 48)  # Set our font
+
+    titleText = font.render('Hooked', True, (0, 0, 0))  # Render font to a surface
+    ttPos = titleText.get_rect()  # Get coordinates of text
+    ttPos.center = titlePos.center  # Center text in the title box
+
+    # Update our screen to show the title
+    screen.blit(tBG, (0, 0))
+    screen.blit(titleBox, titlePos)
+    screen.blit(titleText, ttPos)
+    return titlePos  # Return position of title box, used to start game

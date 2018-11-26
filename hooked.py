@@ -90,35 +90,32 @@ convAshley = {0: "Hi, who's this?",
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Instantiate arrays of chat bubbles
-numAsh = len(convAshley.keys())  # Num lines of dialogue
-numUnk = len(convUnknown.keys())  # Num lines of dialogue
-
-ashleyBubbles = [Bubble(1, screenDims, convAshley[i]) for i in range(numAsh)]
-unknownBubbles = [Bubble(0, screenDims, convUnknown[i]) for i in range(numUnk)]
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Create our background, setup, then enter event catcher
+# Create our background, setup, then enter conversation
 convoBG = background_creator((0, 0, 0), screen)  # Create bg for text conversation
 screen.blit(convoBG, (0, 0))
 pg.display.update()
 
-dialogue = setup(ashleyBubbles, unknownBubbles, screenDims)  # Add lines of dialogue to bubbles, and scale their surface
+[dialogue, bub_spacing] = setup(convAshley, convUnknown, screenDims)  # Add lines of dialogue to bubbles, and scale their surface
 
-while 1:  # Enter main game loop
-    for event in pg.event.get():  # Event queue
+while 1:  # Enter main loop
+    for event in pg.event.get():  # Event queue / catcher
         if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONUP):  # Advance our conversation
-
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            # SCROLL DIFFERENTLY DEPENDING ON WHETHER OR NOT INPUT IS A CLICK OR MOUSE WHEEL
-            for i in range(8):
-                advance_conversation(dialogue, screen, screenDims, convoBG)
-                pg.display.update()
-                pg.time.delay(12)
-            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            # Advance conversation at different speeds based on if scroll or key press/click
+            if event.button in (4, 5):
+                for i in range(10):  # Scrolling
+                    advance_conversation(dialogue, screen, screenDims, convoBG, bub_spacing)
+                    pg.display.update()
+                    pg.time.delay(12)  # Delay by small num of millisecs to make smooth animation
+            else:
+                for i in range(20):  # Click/key press, SHOULD I MAKE IT GO ONE BY ONE?
+                    advance_conversation(dialogue, screen, screenDims, convoBG, bub_spacing)
+                    pg.display.update()
+                    pg.time.delay(12)
 
             pg.display.update()
+            # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
         if event.type == pg.QUIT:
             pg.quit()
