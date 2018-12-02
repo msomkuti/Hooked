@@ -137,6 +137,8 @@ Accomplished: made a module (hookedfuns.py) to hold all of my functions and clas
 
                           This was a BIG update, but the quest to make this ~ f u l l y  d y n a m i c ~ continues.
 
+              12/2/2018:  Fixed event handling issue where pressing a key would check if it had a mouse attribute,
+                          making the program crash
 
 Next: Make text rectangles rounded
 
