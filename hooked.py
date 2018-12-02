@@ -23,7 +23,7 @@ from hookedfuns import *  # Import necessary functions and classes
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Start pygame and set up our display/screen
 pg.init()  # Initialize pygame
-screenDims = [412, 732]  # Specify our dimensions
+screenDims = [400, 700]  # Specify our dimensions
 screen = pg.display.set_mode((screenDims[0], screenDims[1]))  # Set our screen size
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -86,7 +86,7 @@ convAshley = {0: "Hi, who's this?",
               6: "True...",
               7: "But that'd be like eating ur fam, right? Kinda weird."}  # Ashley's lines
 
-# Ending line: They all die from climate change  # Lol
+# Ending line: They all die from climate change :(
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,11 +102,18 @@ while 1:  # Enter main loop
         if event.type in (pg.KEYDOWN, pg.MOUSEBUTTONUP):  # Advance our conversation
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # Advance conversation at different speeds based on if scroll or key press/click
-            if event.button in (4, 5):
-                for i in range(10):  # Scrolling
-                    advance_conversation(dialogue, screen, screenDims, convoBG, bub_spacing)
-                    pg.display.update()
-                    pg.time.delay(12)  # Delay by small num of millisecs to make smooth animation
+
+            if event.type == 6:
+                if event.button in (4, 5):
+                    for i in range(10):  # Scrolling
+                        advance_conversation(dialogue, screen, screenDims, convoBG, bub_spacing)
+                        pg.display.update()
+                        pg.time.delay(12)  # Delay by small num of millisecs to make smooth animation
+                else:
+                    for i in range(20):  # Click/key press, SHOULD I MAKE IT GO ONE BY ONE?
+                        advance_conversation(dialogue, screen, screenDims, convoBG, bub_spacing)
+                        pg.display.update()
+                        pg.time.delay(12)
             else:
                 for i in range(20):  # Click/key press, SHOULD I MAKE IT GO ONE BY ONE?
                     advance_conversation(dialogue, screen, screenDims, convoBG, bub_spacing)
@@ -115,7 +122,6 @@ while 1:  # Enter main loop
 
             pg.display.update()
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
         if event.type == pg.QUIT:
             pg.quit()

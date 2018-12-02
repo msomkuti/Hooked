@@ -10,7 +10,7 @@ pg.init()
 
 
 class Bubble:
-    font = pg.font.SysFont(None, 26)  # Set our font, GET A NICER ONE IN HERE THOOOO
+    font = pg.font.SysFont(None, 30)  # Set our font, GET A NICER ONE IN HERE THOOOO
 
     def __init__(self, sent, screenDims, text):
         self.horz_marg = int(screenDims[0] * 0.12)  # Horizontal margin for msgs from edge of screen
