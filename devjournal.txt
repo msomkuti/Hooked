@@ -26,7 +26,7 @@ Accomplished: made a module (hookedfuns.py) to hold all of my functions and clas
 
                           Note: I really need to start working with more surfaces. There are some
                           fundamental design flaws in this program that I need to address due to
-                          this. Start version control ASAP!!!
+                          this.
 
               11/23/2018: Made is so the background of each chat is now initialized as a surface when chat bubbles
                           are instantiated. Chat bubbles surfaces will now be drawn in relation to the dimensions of
